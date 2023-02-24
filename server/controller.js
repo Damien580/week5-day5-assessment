@@ -26,14 +26,10 @@ module.exports = {
                 city_id serial primary key,
                 name varchar,
                 rating integer,
-                country_id integer
+                country_id integer REFERENCES countries(country_id)
             );
 
-            INSERT INTO cities (name, rating, country_id)
-            VALUES ('Peepoo', 3, 1),
-            ('Poopee', 4, 1),
-            ('Kreplach', 5, 1)
-
+            
             insert into countries (name)
             values ('Afghanistan'),
             ('Albania'),
@@ -230,11 +226,17 @@ module.exports = {
             ('Yemen'),
             ('Zambia'),
             ('Zimbabwe');
-        `).then(() => {
-            console.log('DB seeded!')
-            res.sendStatus(200)
-        }).catch(err => console.log('error seeding DB', err))
-    },
+
+            INSERT INTO cities (name, rating, country_id)
+            VALUES ('Peepoo', 3, 1),
+            ('Poopee', 4, 1),
+            ('Kreplach', 5, 1);
+
+            `).then(() => {
+                console.log('DB seeded!')
+                res.sendStatus(200)
+            }).catch(err => console.log('error seeding DB', err))
+        },
 
     getCountries: (req, res) => {
         sequelize.query(`SELECT * FROM countries;`)
@@ -264,9 +266,9 @@ module.exports = {
 
 
     deleteCity: (req, res) => {
-        let { city_id } = req.params
+        let { id } = req.params
         sequelize.query(`
-        DELETE FROM cities WHERE city_id=;
+        DELETE FROM cities WHERE city_id=${id};
         `).then(dbRes => res.status(200).send(dbRes[0]))
         .catch(err => console.log(err))
     }
